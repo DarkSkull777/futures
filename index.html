@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Futures Trade</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #1a1a1a;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        h1 {
+            margin-bottom: 50px;
+            font-size: 3rem;
+            font-weight: bold;
+            text-align: center;
+        }
+        .button-container {
+            display: flex;
+            gap: 20px;
+        }
+        .option-btn {
+            background-color: #444;
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option-btn:hover {
+            background-color: #888;
+        }
+        .form-container {
+            margin-top: 30px;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+            background: #222;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+        }
+        .form-container input[type="text"],
+        .form-container input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+        }
+        .radio-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .radio-group input {
+            margin: 0;
+        }
+        .start-btn {
+            background-color: #4caf50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .start-btn:hover {
+            background-color: #45a049;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #333;
+            border-radius: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Futures Trade</h1>
+    <div class="button-container">
+        <button class="option-btn" onclick="showForm('futures')">Futures</button>
+        <button class="option-btn" onclick="showForm('leverage')">Leverage</button>
+    </div>
+    <div class="form-container" id="futures-form">
+        <div class="radio-group">
+            <label><input type="radio" name="position" value="long"> <span style="color: green;">Long</span></label>
+            <label><input type="radio" name="position" value="short"> <span style="color: red;">Short</span></label>
+        </div>
+        <input type="number" id="balance" placeholder="Balance/Saldo Margin">
+        <input type="number" id="entry-price" placeholder="Entry Price">
+        <input type="number" id="leverage" placeholder="Leverage (Max 125)">
+        <input type="number" id="target-price" placeholder="Target Price">
+        <button class="start-btn" onclick="calculateFutures()">Start</button>
+        <div class="results" id="futures-results"></div>
+    </div>
+    <div class="form-container" id="leverage-form">
+        <div class="radio-group">
+            <label><input type="radio" name="position" value="long"> <span style="color: green;">Long</span></label>
+            <label><input type="radio" name="position" value="short"> <span style="color: red;">Short</span></label>
+        </div>
+        <input type="number" id="balance-lev" placeholder="Balance/Saldo Margin">
+        <input type="number" id="entry-price-lev" placeholder="Entry Price">
+        <input type="number" id="liquidation-price" placeholder="Liquidation Price">
+        <button class="start-btn" onclick="calculateLeverage()">Start</button>
+        <div class="results" id="leverage-results"></div>
+    </div>
+    <script>
+        function showForm(type) {
+            document.getElementById('futures-form').style.display = 'none';
+            document.getElementById('leverage-form').style.display = 'none';
+            if (type === 'futures') {
+                document.getElementById('futures-form').style.display = 'flex';
+            } else if (type === 'leverage') {
+                document.getElementById('leverage-form').style.display = 'flex';
+            }
+        }
+
+        function calculateFutures() {
+            const balance = parseFloat(document.getElementById('balance').value);
+            const entryPrice = parseFloat(document.getElementById('entry-price').value);
+            const leverage = parseFloat(document.getElementById('leverage').value);
+            const targetPrice = parseFloat(document.getElementById('target-price').value);
+            const feeRate = 0.0004;
+            const maintenanceMargin = 0.005;
+
+            if (!balance || !entryPrice || !leverage || !targetPrice) {
+                alert("Please fill all fields!");
+                return;
+            }
+
+            // Calculation Logic Here (Add it accordingly)
+            document.getElementById('futures-results').style.display = 'block';
+            document.getElementById('futures-results').innerHTML = `Calculated Results (example)`;
+        }
+
+        function calculateLeverage() {
+            const balance = parseFloat(document.getElementById('balance-lev').value);
+            const entryPrice = parseFloat(document.getElementById('entry-price-lev').value);
+            const liquidationPrice = parseFloat(document.getElementById('liquidation-price').value);
+            const maintenanceMargin = 0.005;
+
+            if (!balance || !entryPrice || !liquidationPrice) {
+                alert("Please fill all fields!");
+                return;
+            }
+
+            // Calculation Logic Here (Add it accordingly)
+            document.getElementById('leverage-results').style.display = 'block';
+            document.getElementById('leverage-results').innerHTML = `Calculated Results (example)`;
+        }
+    </script>
+</body>
+</html>
