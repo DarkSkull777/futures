@@ -2,7 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Futures Trading Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Comprehensive analytics and insights for futures trading. Stay ahead with real-time data, trends, and expert analysis.">
+    <meta name="author" content="Dymles Ganz">
+    <meta name="keywords" content="futures trade, analytics, trading futures, leverage ideal">
+    <link rel="icon" href="btc.ico" type="image/x-icon">
+    <meta property="og:title" content="Analytics for Futures Trade">
+    <meta property="og:description" content="Get real-time insights and trends for futures trading.">
+    <meta property="og:image" content="https://b.top4top.io/p_3291jui7m1.jpg">
+    <meta property="og:url" content="https://darkskull777.github.io/analytics-futures">
+    <meta property="og:type" content="website">
+    <title>Analytics for Futures Trade</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -111,7 +121,7 @@
     </style>
 </head>
 <body>
-    <div class="title">Futures Trade</div>
+    <div class="title">Analytics Before Trading Futures.</div>
     
     <div class="mode-selector">
         <button class="mode-btn" onclick="switchMode('futures')">Futures</button>
@@ -211,7 +221,6 @@
             const leverage = parseFloat(document.getElementById('futures-leverage').value);
             const targetPrice = parseFloat(document.getElementById('futures-target').value);
             
-            // Validate inputs
             if (isNaN(balance) || isNaN(entryPrice) || isNaN(leverage) || isNaN(targetPrice)) {
                 alert('Please fill in all fields with valid numbers');
                 return;
@@ -220,13 +229,11 @@
             const positionSize = balance * leverage;
             const contracts = positionSize / entryPrice;
             
-            // Calculate liquidation price
             const threshold = (1 / leverage) - MAINTENANCE_MARGIN;
             const liquidationPrice = positionType === 'long' 
                 ? entryPrice * (1 - threshold)
                 : entryPrice * (1 + threshold);
             
-            // Calculate profit
             let priceChange;
             if (positionType === 'long') {
                 priceChange = (targetPrice - entryPrice) / entryPrice;
@@ -268,7 +275,6 @@
             const entryPrice = parseFloat(document.getElementById('leverage-entry').value);
             const liquidationPrice = parseFloat(document.getElementById('leverage-liquidation').value);
             
-            // Validate inputs
             if (isNaN(balance) || isNaN(entryPrice) || isNaN(liquidationPrice)) {
                 alert('Please fill in all fields with valid numbers');
                 return;
@@ -297,7 +303,6 @@
             results.style.display = 'block';
         }
         
-        // Add event listeners for enter key on last input fields
         document.getElementById('futures-target').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 calculateFutures();
@@ -310,7 +315,6 @@
             }
         });
         
-        // Initialize with Futures calculator
         switchMode('futures');
     </script>
 </body>
