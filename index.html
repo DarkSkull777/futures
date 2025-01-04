@@ -49,7 +49,6 @@
             border-radius: 10px;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
         }
-        .form-container input[type="text"],
         .form-container input[type="number"] {
             width: 100%;
             padding: 10px;
@@ -90,7 +89,6 @@
             padding: 15px;
             background-color: #333;
             border-radius: 5px;
-            display: none;
         }
     </style>
 </head>
@@ -112,25 +110,11 @@
         <button class="start-btn" onclick="calculateFutures()">Start</button>
         <div class="results" id="futures-results"></div>
     </div>
-    <div class="form-container" id="leverage-form">
-        <div class="radio-group">
-            <label><input type="radio" name="position" value="long"> <span style="color: green;">Long</span></label>
-            <label><input type="radio" name="position" value="short"> <span style="color: red;">Short</span></label>
-        </div>
-        <input type="number" id="balance-lev" placeholder="Balance/Saldo Margin">
-        <input type="number" id="entry-price-lev" placeholder="Entry Price">
-        <input type="number" id="liquidation-price" placeholder="Liquidation Price">
-        <button class="start-btn" onclick="calculateLeverage()">Start</button>
-        <div class="results" id="leverage-results"></div>
-    </div>
     <script>
         function showForm(type) {
             document.getElementById('futures-form').style.display = 'none';
-            document.getElementById('leverage-form').style.display = 'none';
             if (type === 'futures') {
                 document.getElementById('futures-form').style.display = 'flex';
-            } else if (type === 'leverage') {
-                document.getElementById('leverage-form').style.display = 'flex';
             }
         }
 
@@ -139,33 +123,23 @@
             const entryPrice = parseFloat(document.getElementById('entry-price').value);
             const leverage = parseFloat(document.getElementById('leverage').value);
             const targetPrice = parseFloat(document.getElementById('target-price').value);
-            const feeRate = 0.0004;
-            const maintenanceMargin = 0.005;
 
             if (!balance || !entryPrice || !leverage || !targetPrice) {
                 alert("Please fill all fields!");
                 return;
             }
 
-            // Calculation Logic Here (Add it accordingly)
-            document.getElementById('futures-results').style.display = 'block';
-            document.getElementById('futures-results').innerHTML = `Calculated Results (example)`;
-        }
+            // Example calculation (replace this with your logic)
+            const margin = balance / leverage;
+            const profitLoss = ((targetPrice - entryPrice) / entryPrice) * leverage * margin;
 
-        function calculateLeverage() {
-            const balance = parseFloat(document.getElementById('balance-lev').value);
-            const entryPrice = parseFloat(document.getElementById('entry-price-lev').value);
-            const liquidationPrice = parseFloat(document.getElementById('liquidation-price').value);
-            const maintenanceMargin = 0.005;
-
-            if (!balance || !entryPrice || !liquidationPrice) {
-                alert("Please fill all fields!");
-                return;
-            }
-
-            // Calculation Logic Here (Add it accordingly)
-            document.getElementById('leverage-results').style.display = 'block';
-            document.getElementById('leverage-results').innerHTML = `Calculated Results (example)`;
+            // Display the results
+            const resultsDiv = document.getElementById('futures-results');
+            resultsDiv.style.display = 'block';
+            resultsDiv.innerHTML = `
+                <p><strong>Margin:</strong> ${margin.toFixed(2)}</p>
+                <p><strong>Profit/Loss:</strong> ${profitLoss.toFixed(2)}</p>
+            `;
         }
     </script>
 </body>
