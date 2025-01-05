@@ -132,7 +132,6 @@
         <button class="mode-btn" onclick="switchMode('leverage')">Leverage</button>
     </div>
     
-    <!-- Futures Calculator -->
     <div id="futures-calc" class="calculator">
         <div class="position-type">
             <label class="radio-label long-label">
@@ -223,66 +222,85 @@
             return price >= 1 ? price.toFixed(2) : price.toFixed(8);
         }
         
-        function calculateFutures() {
-            const positionType = document.querySelector('input[name="position-type"]:checked').value;
-            const balance = parseFloat(document.getElementById('futures-balance').value);
-            const entryPrice = parseFloat(document.getElementById('futures-entry').value);
-            const stopLoss = parseFloat(document.getElementById('futures-sl').value);
-            const leverage = parseFloat(document.getElementById('futures-leverage').value);
-            const targetPrice = parseFloat(document.getElementById('futures-target').value);
-            
-            if (isNaN(balance) || isNaN(entryPrice) || isNaN(leverage) || isNaN(targetPrice)) {
-                alert('Please fill in all fields with valid numbers');
-                return;
-            }
-            
-            const positionSize = balance * leverage;
-            const contracts = positionSize / entryPrice;
-            
-            const threshold = (1 / leverage) - MAINTENANCE_MARGIN;
-            const liquidationPrice = positionType === 'long' 
-                ? entryPrice * (1 - threshold)
-                : entryPrice * (1 + threshold);
-            
-        let slPriceChange;
-        if (positionType === 'long') {
-            slPriceChange = (stopLoss - entryPrice) / entryPrice;
-        } else {
-            slPriceChange = (entryPrice - stopLoss) / entryPrice;
-        }
+function calculateFutures() {
+    const positionType = document.querySelector('input[name="position-type"]:checked').value;
+    const balance = parseFloat(document.getElementById('futures-balance').value);
+    const entryPrice = parseFloat(document.getElementById('futures-entry').value);
+    const stopLoss = parseFloat(document.getElementById('futures-sl').value);
+    const leverage = parseFloat(document.getElementById('futures-leverage').value);
+    const targetPrice = parseFloat(document.getElementById('futures-target').value);
     
-        const slGrossLoss = positionSize * Math.abs(slPriceChange);
-        const slFees = positionSize * FEE_RATE * 2;
-        const totalLoss = slGrossLoss + slFees;
-        const balanceAfterSL = balance - totalLoss;
-            
-            const priceToLiqPercent = ((liquidationPrice - entryPrice) / entryPrice) * 100;
-            const priceToTargetPercent = positionType === 'long'
-                ? ((targetPrice - entryPrice) / entryPrice) * 100
-                : ((entryPrice - targetPrice) / entryPrice) * 100;
-            
-            const results = document.getElementById('futures-results');
-            results.innerHTML = `
-                <div>Position Type: ${positionType.toUpperCase()}</div>
-                <div>Initial Margin: ${formatPrice(balance)} USDT</div>
-                <div>Position Size: ${formatPrice(positionSize)} USDT</div>
-                <div>Contracts Size: ${formatPrice(contracts)}<br></div>
-                <div>Entry Price: ${formatPrice(entryPrice)}</div>
-                <div>Liquidation Price: ${formatPrice(liquidationPrice)}</div>
-                <div>Distance to Liquidation: ${Math.abs(priceToLiqPercent).toFixed(2)}%</div>
-                <div>Target Price: ${formatPrice(targetPrice)}</div>
-                <div>Profit at Target: ${formatPrice(profit)} USDT</div>
-                <div class="loss">Stop Loss Price: ${formatPrice(stopLoss)}</div>
-                <div class="loss">Loss at Stop Loss: -${formatPrice(totalLoss)} USDT</div>
-                <div class="loss">Balance After Stop Loss: ${formatPrice(balanceAfterSL)} USDT</div>
-                <div class="loss">Loss Percentage: -${((totalLoss / balance) * 100).toFixed(2)}%</div>
-                <div class="loss">Price Movement to Stop Loss: ${Math.abs(priceToSLPercent).toFixed(2)}%<br></div>
-                <div>Total Balance After Target: ${formatPrice(totalBalance)} USDT</div>
-                <div>Return on Investment: ${((profit / balance) * 100).toFixed(2)}%</div>
-                <div>Price Movement to Target: ${priceToTargetPercent.toFixed(2)}%</div>
-            `;
-            results.style.display = 'block';
-        }
+    if (isNaN(balance) || isNaN(entryPrice) || isNaN(stopLoss) || isNaN(leverage) || isNaN(targetPrice)) {
+        alert('Please fill in all fields with valid numbers');
+        return;
+    }
+    
+    const positionSize = balance * leverage;
+    const contracts = positionSize / entryPrice;
+    
+    const threshold = (1 / leverage) - MAINTENANCE_MARGIN;
+    const liquidationPrice = positionType === 'long' 
+        ? entryPrice * (1 - threshold)
+        : entryPrice * (1 + threshold);
+
+    // Calculate target profit
+    let priceChange;
+    if (positionType === 'long') {
+        priceChange = (targetPrice - entryPrice) / entryPrice;
+    } else {
+        priceChange = (entryPrice - targetPrice) / entryPrice;
+    }
+
+    const grossProfit = positionSize * priceChange;
+    const fees = positionSize * FEE_RATE * 2;
+    const profit = grossProfit - fees;
+    const totalBalance = balance + profit;
+    
+    // Calculate stop loss
+    let slPriceChange;
+    if (positionType === 'long') {
+        slPriceChange = (stopLoss - entryPrice) / entryPrice;
+    } else {
+        slPriceChange = (entryPrice - stopLoss) / entryPrice;
+    }
+
+    const slGrossLoss = positionSize * Math.abs(slPriceChange);
+    const slFees = positionSize * FEE_RATE * 2;
+    const totalLoss = slGrossLoss + slFees;
+    const balanceAfterSL = balance - totalLoss;
+    
+    const priceToLiqPercent = ((liquidationPrice - entryPrice) / entryPrice) * 100;
+    const priceToTargetPercent = positionType === 'long'
+        ? ((targetPrice - entryPrice) / entryPrice) * 100
+        : ((entryPrice - targetPrice) / entryPrice) * 100;
+    const priceToSLPercent = positionType === 'long'
+        ? ((stopLoss - entryPrice) / entryPrice) * 100
+        : ((entryPrice - stopLoss) / entryPrice) * 100;
+    
+    const results = document.getElementById('futures-results');
+    results.innerHTML = `
+        <div>Position Type: ${positionType.toUpperCase()}</div>
+        <div>Initial Margin: ${formatPrice(balance)} USDT</div>
+        <div>Position Size: ${formatPrice(positionSize)} USDT</div>
+        <div>Contracts Size: ${formatPrice(contracts)}<br></div>
+        <div>Entry Price: ${formatPrice(entryPrice)}</div>
+        <div>Liquidation Price: ${formatPrice(liquidationPrice)}</div>
+        <div>Distance to Liquidation: ${Math.abs(priceToLiqPercent).toFixed(2)}%</div>
+        <br>
+        <div>Target Price: ${formatPrice(targetPrice)}</div>
+        <div>Profit at Target: ${formatPrice(profit)} USDT</div>
+        <div class="loss">Stop Loss Price: ${formatPrice(stopLoss)}</div>
+        <div class="loss">Loss at Stop Loss: -${formatPrice(totalLoss)} USDT</div>
+        <div class="loss">Balance After Stop Loss: ${formatPrice(balanceAfterSL)} USDT</div>
+        <div class="loss">Loss Percentage: -${((totalLoss / balance) * 100).toFixed(2)}%</div>
+        <div class="loss">Price Movement to Stop Loss: ${Math.abs(priceToSLPercent).toFixed(2)}%<br></div>
+        <br>
+        <div>Total Balance After Target: ${formatPrice(totalBalance)} USDT</div>
+        <div>Return on Investment: ${((profit / balance) * 100).toFixed(2)}%</div>
+        <div>Price Movement to Target: ${priceToTargetPercent.toFixed(2)}%</div>
+    `;
+    results.style.display = 'block';
+}
         
         function calculateLeverage() {
             const positionType = document.querySelector('input[name="leverage-position-type"]:checked').value;
