@@ -287,14 +287,14 @@ function calculateFutures() {
         <div>Liquidation Price: ${formatPrice(liquidationPrice)}</div>
         <div>Distance to Liquidation: ${Math.abs(priceToLiqPercent).toFixed(2)}%</div>
         <br>
+        <div>Stop Loss Price: ${formatPrice(stopLoss)}</div>
+        <div>Loss at Stop Loss: -${formatPrice(totalLoss)} USDT</div>
+        <div>Balance After Stop Loss: ${formatPrice(balanceAfterSL)} USDT</div>
+        <div>Loss Percentage: -${((totalLoss / balance) * 100).toFixed(2)}%</div>
+        <div>Price Movement to Stop Loss: ${Math.abs(priceToSLPercent).toFixed(2)}%<br></div>
+        <br>
         <div>Target Price: ${formatPrice(targetPrice)}</div>
         <div>Profit at Target: ${formatPrice(profit)} USDT</div>
-        <div class="loss">Stop Loss Price: ${formatPrice(stopLoss)}</div>
-        <div class="loss">Loss at Stop Loss: -${formatPrice(totalLoss)} USDT</div>
-        <div class="loss">Balance After Stop Loss: ${formatPrice(balanceAfterSL)} USDT</div>
-        <div class="loss">Loss Percentage: -${((totalLoss / balance) * 100).toFixed(2)}%</div>
-        <div class="loss">Price Movement to Stop Loss: ${Math.abs(priceToSLPercent).toFixed(2)}%<br></div>
-        <br>
         <div>Total Balance After Target: ${formatPrice(totalBalance)} USDT</div>
         <div>Return on Investment: ${((profit / balance) * 100).toFixed(2)}%</div>
         <div>Price Movement to Target: ${priceToTargetPercent.toFixed(2)}%</div>
