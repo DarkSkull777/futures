@@ -48,7 +48,11 @@
         .mode-btn.active {
             background-color: #666;
         }
-        
+      
+        .loss {
+            color: #f44336;
+        }
+      
         .calculator {
             max-width: 600px;
             margin: 0 auto;
@@ -152,6 +156,11 @@
         </div>
         
         <div class="input-group">
+            <label>Stop Loss</label>
+            <input type="number" id="futures-sl" step="any" required>
+        </div>
+
+        <div class="input-group">
             <label>Leverage</label>
             <input type="number" id="futures-leverage" max="125" step="any" required>
         </div>
@@ -218,6 +227,7 @@
             const positionType = document.querySelector('input[name="position-type"]:checked').value;
             const balance = parseFloat(document.getElementById('futures-balance').value);
             const entryPrice = parseFloat(document.getElementById('futures-entry').value);
+            const stopLoss = parseFloat(document.getElementById('futures-sl').value);
             const leverage = parseFloat(document.getElementById('futures-leverage').value);
             const targetPrice = parseFloat(document.getElementById('futures-target').value);
             
@@ -234,17 +244,17 @@
                 ? entryPrice * (1 - threshold)
                 : entryPrice * (1 + threshold);
             
-            let priceChange;
-            if (positionType === 'long') {
-                priceChange = (targetPrice - entryPrice) / entryPrice;
-            } else {
-                priceChange = (entryPrice - targetPrice) / entryPrice;
-            }
-            
-            const grossProfit = positionSize * priceChange;
-            const fees = positionSize * FEE_RATE * 2;
-            const profit = grossProfit - fees;
-            const totalBalance = balance + profit;
+        let slPriceChange;
+        if (positionType === 'long') {
+            slPriceChange = (stopLoss - entryPrice) / entryPrice;
+        } else {
+            slPriceChange = (entryPrice - stopLoss) / entryPrice;
+        }
+    
+        const slGrossLoss = positionSize * Math.abs(slPriceChange);
+        const slFees = positionSize * FEE_RATE * 2;
+        const totalLoss = slGrossLoss + slFees;
+        const balanceAfterSL = balance - totalLoss;
             
             const priceToLiqPercent = ((liquidationPrice - entryPrice) / entryPrice) * 100;
             const priceToTargetPercent = positionType === 'long'
@@ -256,12 +266,17 @@
                 <div>Position Type: ${positionType.toUpperCase()}</div>
                 <div>Initial Margin: ${formatPrice(balance)} USDT</div>
                 <div>Position Size: ${formatPrice(positionSize)} USDT</div>
-                <div>Contracts Size: ${formatPrice(contracts)}</div>
+                <div>Contracts Size: ${formatPrice(contracts)}<br></div>
                 <div>Entry Price: ${formatPrice(entryPrice)}</div>
                 <div>Liquidation Price: ${formatPrice(liquidationPrice)}</div>
                 <div>Distance to Liquidation: ${Math.abs(priceToLiqPercent).toFixed(2)}%</div>
                 <div>Target Price: ${formatPrice(targetPrice)}</div>
                 <div>Profit at Target: ${formatPrice(profit)} USDT</div>
+                <div class="loss">Stop Loss Price: ${formatPrice(stopLoss)}</div>
+                <div class="loss">Loss at Stop Loss: -${formatPrice(totalLoss)} USDT</div>
+                <div class="loss">Balance After Stop Loss: ${formatPrice(balanceAfterSL)} USDT</div>
+                <div class="loss">Loss Percentage: -${((totalLoss / balance) * 100).toFixed(2)}%</div>
+                <div class="loss">Price Movement to Stop Loss: ${Math.abs(priceToSLPercent).toFixed(2)}%<br></div>
                 <div>Total Balance After Target: ${formatPrice(totalBalance)} USDT</div>
                 <div>Return on Investment: ${((profit / balance) * 100).toFixed(2)}%</div>
                 <div>Price Movement to Target: ${priceToTargetPercent.toFixed(2)}%</div>
