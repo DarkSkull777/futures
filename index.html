@@ -336,12 +336,36 @@ function calculateFutures() {
             results.style.display = 'block';
         }
         
-        document.getElementById('futures-target').addEventListener('keypress', function(e) {
+        document.getElementById('futures-balance').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateFutures();
+            }
+        });
+
+        document.getElementById('futures-entry').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 calculateFutures();
             }
         });
         
+        document.getElementById('futures-target').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateFutures();
+            }
+        });
+
+        document.getElementById('futures-leverage').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateFutures();
+            }
+        });
+
+        document.getElementById('futures-sl').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculateFutures();
+            }
+        });
+
         document.getElementById('leverage-liquidation').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 calculateLeverage();
