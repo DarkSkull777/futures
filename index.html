@@ -165,7 +165,7 @@
         </div>
         
         <div class="input-group">
-            <label>Target Price</label>
+            <label>Take Profit</label>
             <input type="number" id="futures-target" step="any" required>
         </div>
         
@@ -293,7 +293,7 @@ function calculateFutures() {
         <div>Loss Percentage: -${((totalLoss / balance) * 100).toFixed(2)}%</div>
         <div>Price Movement to Stop Loss: ${Math.abs(priceToSLPercent).toFixed(2)}%<br></div>
         <br>
-        <div>Target Price: ${formatPrice(targetPrice)}</div>
+        <div>Take Profit: ${formatPrice(targetPrice)}</div>
         <div>Profit at Target: ${formatPrice(profit)} USDT</div>
         <div>Total Balance After Target: ${formatPrice(totalBalance)} USDT</div>
         <div>Return on Investment: ${((profit / balance) * 100).toFixed(2)}%</div>
